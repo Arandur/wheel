@@ -3,33 +3,44 @@ import { Sector } from './Sector';
 
 export type WheelProps = {
     sectors: string[];
+    grads: number;
     width: number;
     height: number;
 }
 
-const getMousePos = Object.assign(
-    (e: React.MouseEvent<SVGElement>): SVGPoint => {
-        const svg = getMousePos.svg || (getMousePos.svg = document.getElementById('rootSVG') as SVGSVGElement & HTMLElement);
-        const pt = svg.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
-        return pt.matrixTransform(svg.getScreenCTM()?.inverse());
-    },
-    { svg: undefined as SVGSVGElement | undefined }
-);
-
 export const Wheel = (props: WheelProps) => {
+    const ref = React.createRef<SVGSVGElement>();
+    const innerWidth = 240;
+    const innerHeight = 240;
+
+    const viewBox = [
+        -innerWidth / 2, -innerHeight / 2,
+        innerWidth, innerHeight
+    ].join(' ');
+
+    const withMousePos = <T extends {}>(cbk: (pt: { x: number, y: number }) => T) =>
+        (e: React.MouseEvent<SVGElement>) => {
+            const svg = ref.current;
+            if (svg) {
+                let pt = svg.createSVGPoint();
+                pt.x = e.clientX; pt.y = e.clientY;
+                pt = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+                return cbk(pt);
+            }
+        }
+
     const makeSector = (title: string, idx: number) =>
         <g key={title}transform={`rotate(${idx * 360 / props.sectors.length})`}>
             <Sector 
                 title={title}
                 arc={1 / props.sectors.length}
-                getMousePos={getMousePos}
+                grads={props.grads}
+                withMousePos={withMousePos}
             />
         </g>
 
     return (
-        <svg id="rootSVG" viewBox="-120 -120 240 240" width={props.width} height={props.height}>
+        <svg ref={ref} viewBox={viewBox} width={props.width} height={props.height}>
             {props.sectors.map(makeSector)}
         </svg>
     );

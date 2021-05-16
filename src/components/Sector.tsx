@@ -4,7 +4,9 @@ import { createUseStyles } from 'react-jss';
 export type SectorProps = {
     title: string;
     arc: number; // Size of the arc as a fraction of tau
-    getMousePos: (e: React.MouseEvent<SVGElement>) => SVGPoint;
+    grads: number; // Number of gradients for each sector
+    withMousePos: <T>(cbk: (pt: { x: number, y: number }) => T) => 
+        (e: React.MouseEvent<SVGElement>) => T | undefined;
 }
 
 const getTextWidth = Object.assign(
@@ -23,11 +25,10 @@ export const Sector = (props: SectorProps) => {
     let [hover, setHover] = useState<number | undefined>(undefined);
     let styles = useStyles();
 
-    const getScoreFromMousePos = (e: React.MouseEvent<SVGElement>): number => {
-        const mousePos = props.getMousePos(e);
-        console.log(`mousePos: { x: ${mousePos.x}, y: ${mousePos.y} }`);
-        return Math.ceil(Math.sqrt(mousePos.x * mousePos.x + mousePos.y * mousePos.y) / 10);
-    }
+    const getScoreFromMousePos = props.withMousePos(
+        (pt: { x: number, y: number }): number => 
+            Math.ceil(Math.sqrt(pt.x * pt.x + pt.y * pt.y) / 10)
+    );
 
     const sectorPath = (level: number): string => {
         const radius = level * 10;
@@ -77,7 +78,7 @@ export const Sector = (props: SectorProps) => {
     const onMouseClick = (e: React.MouseEvent<SVGPathElement>) => {
         const radius = getScoreFromMousePos(e);
 
-        if (radius !== score) {
+        if (radius && radius !== score) {
             setScore(radius);
         } else {
             setScore(0);
