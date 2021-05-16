@@ -42,7 +42,7 @@ export const Wheel = (props: WheelProps) => {
         </g>
 
     const gradCircles = Array.from(Array(props.grads).keys()).slice(1).map((i) => {
-        const radius = i * 10;
+        const radius = i * 100 / props.grads;
         return <circle key={i} className={styles.gradCircles} cx={0} cy={0} r={radius} />
     });
 

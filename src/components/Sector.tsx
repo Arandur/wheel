@@ -27,11 +27,11 @@ export const Sector = (props: SectorProps) => {
 
     const getScoreFromMousePos = props.withMousePos(
         (pt: { x: number, y: number }): number => 
-            Math.ceil(Math.sqrt(pt.x * pt.x + pt.y * pt.y) / 10)
+            Math.ceil(Math.sqrt(pt.x * pt.x + pt.y * pt.y) * props.grads / 100)
     );
 
     const sectorPath = (level: number): string => {
-        const radius = level * 10;
+        const radius = level * 100 / props.grads;
         const degs = props.arc * 360;
         const rads = props.arc * 2 * Math.PI;
         const x = radius * Math.cos(rads);
@@ -107,7 +107,7 @@ export const Sector = (props: SectorProps) => {
             {paths()}
             <path 
                 className={styles.sectorContainer} 
-                d={sectorPath(10)} 
+                d={sectorPath(props.grads)} 
                 onMouseMove={onMouseMove}
                 onMouseLeave={onMouseLeave}
                 onMouseDown={onMouseClick} />
