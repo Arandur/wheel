@@ -102,16 +102,18 @@ export const Sector = (props: SectorProps) => {
         }
     }
 
-    return <g>
-        {paths()}
-        <path 
-            className={styles.sectorContainer} 
-            d={sectorPath(10)} 
-            onMouseMove={onMouseMove}
-            onMouseLeave={onMouseLeave}
-            onMouseDown={onMouseClick} />
-        {title}
-    </g>;
+    return (
+        <>
+            {paths()}
+            <path 
+                className={styles.sectorContainer} 
+                d={sectorPath(10)} 
+                onMouseMove={onMouseMove}
+                onMouseLeave={onMouseLeave}
+                onMouseDown={onMouseClick} />
+            {title}
+        </>
+    );
 }
 
 const useStyles = createUseStyles(
@@ -119,7 +121,8 @@ const useStyles = createUseStyles(
         sectorContainer: {
             fill: "transparent",
             stroke: "black",
-            strokeWidth: 1
+            strokeWidth: 1,
+            pointerEvents: "fill"
         },
         sectorHover: {
             fill: "rgba(255, 128, 128)",

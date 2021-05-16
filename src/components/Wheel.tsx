@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sector } from './Sector';
+import { createUseStyles } from 'react-jss';
 
 export type WheelProps = {
     sectors: string[];
@@ -10,6 +11,7 @@ export type WheelProps = {
 
 export const Wheel = (props: WheelProps) => {
     const ref = React.createRef<SVGSVGElement>();
+    const styles = useStyles();
     const innerWidth = 240;
     const innerHeight = 240;
 
@@ -30,7 +32,7 @@ export const Wheel = (props: WheelProps) => {
         }
 
     const makeSector = (title: string, idx: number) =>
-        <g key={title}transform={`rotate(${idx * 360 / props.sectors.length})`}>
+        <g key={title} transform={`rotate(${idx * 360 / props.sectors.length})`}>
             <Sector 
                 title={title}
                 arc={1 / props.sectors.length}
@@ -39,9 +41,24 @@ export const Wheel = (props: WheelProps) => {
             />
         </g>
 
+    const gradCircles = Array.from(Array(props.grads).keys()).slice(1).map((i) => {
+        const radius = i * 10;
+        return <circle key={i} className={styles.gradCircles} cx={0} cy={0} r={radius} />
+    });
+
     return (
         <svg ref={ref} viewBox={viewBox} width={props.width} height={props.height}>
             {props.sectors.map(makeSector)}
+            {gradCircles}
         </svg>
     );
 }
+
+const useStyles = createUseStyles({
+    gradCircles: {
+        fill: "none",
+        stroke: "gray",
+        strokeDasharray: "4",
+        pointerEvents: "none"
+    }
+});
