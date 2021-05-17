@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
+import { SvgContext } from './svg/svg';
 
 export type SectorProps = {
     title: string;
     arc: number; // Size of the arc as a fraction of tau
     grads: number; // Number of gradients for each sector
-    withMousePos: <T>(cbk: (pt: { x: number, y: number }) => T) => 
-        (e: React.MouseEvent<SVGElement>) => T | undefined;
+    ctx: SvgContext
 }
 
 const getTextWidth = Object.assign(
@@ -25,7 +25,7 @@ export const Sector = (props: SectorProps) => {
     let [hover, setHover] = useState<number | undefined>(undefined);
     let styles = useStyles();
 
-    const getScoreFromMousePos = props.withMousePos(
+    const getScoreFromMousePos = props.ctx.withMousePos(
         (pt: { x: number, y: number }): number => 
             Math.ceil(Math.sqrt(pt.x * pt.x + pt.y * pt.y) * props.grads / 100)
     );
