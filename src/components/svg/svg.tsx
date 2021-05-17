@@ -1,6 +1,8 @@
 import React from 'react';
 
 export type SvgContext = {
+    innerWidth: number;
+    innerHeight: number;
     withMousePos: <T>(cbk: (pt: { x: number, y: number }) => T) => (e: React.MouseEvent<SVGElement>) => T | undefined;
 }
 
@@ -31,6 +33,7 @@ const Svg = (props: SvgProps) => {
         }
 
     const ctx: SvgContext = {
+        innerWidth, innerHeight,
         withMousePos
     };
 
