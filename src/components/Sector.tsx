@@ -25,13 +25,19 @@ export const Sector = (props: SectorProps) => {
     let [hover, setHover] = useState<number | undefined>(undefined);
     let styles = useStyles();
 
+    let maxRadius = Math.min(props.ctx.innerHeight, props.ctx.innerWidth) / 2 * 5 / 6;
+    const levelToRadius = (level: number): number => maxRadius * level / props.grads;
+    const radiusToLevel = (radius: number): number => radius * props.grads / maxRadius;
+
     const getScoreFromMousePos = props.ctx.withMousePos(
-        (pt: { x: number, y: number }): number => 
-            Math.ceil(Math.sqrt(pt.x * pt.x + pt.y * pt.y) * props.grads / 100)
+        (pt: { x: number, y: number }): number => {
+            const radius = Math.sqrt(pt.x * pt.x + pt.y * pt.y);
+            return Math.ceil(radiusToLevel(radius));
+        }
     );
 
     const sectorPath = (level: number): string => {
-        const radius = level * 100 / props.grads;
+        const radius = levelToRadius(level);
         const degs = props.arc * 360;
         const rads = props.arc * 2 * Math.PI;
         const x = radius * Math.cos(rads);
@@ -46,10 +52,10 @@ export const Sector = (props: SectorProps) => {
     };
 
     const title = (() => {
-        const radius = 105;
+        const radius = levelToRadius(props.grads + 0.5);
         const degs = props.arc * 360;
         const rads = props.arc * 2 * Math.PI;
-        const x = 110 * Math.cos(rads);
+        const x = radius * Math.cos(rads);
         const y = radius * Math.sin(rads);
         const textPathLength = radius * rads;
         const textLength = getTextWidth(props.title, '12px sans-serif')
